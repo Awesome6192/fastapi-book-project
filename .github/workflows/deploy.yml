@@ -35,13 +35,21 @@ jobs:
             sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
 
+            # Restart Docker service
+            sudo systemctl restart docker
+
             # Verify installations
             docker --version
             docker-compose --version
 
             # Navigate to the project directory and deploy
-            cd /home/ubuntu/
-            git clone https://github.com/Awesome6192/fastapi-book-project.git
-            cd fastapi-book-project/
-            git pull
+            if [ -d "/home/ubuntu/fastapi-book-project" ]; then
+              cd /home/ubuntu/fastapi-book-project
+              git pull
+            else
+              git clone https://github.com/Awesome6192/fastapi-book-project.git /home/ubuntu/fastapi-book-project
+              cd /home/ubuntu/fastapi-book-project
+            fi
+
+            # Deploy using Docker Compose
             docker-compose up -d --build
